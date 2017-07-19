@@ -14,15 +14,24 @@ module.exports = function(myReddit) {
     });
     
     authController.post('/login', urlencodedParser, function(request, response) {
-        var input = request.body
-        myReddit.checkUserLogin(input.username, input.password)
-        .then(response =>{
-            myReddit.createUserSession(response.Id)
-           
+        var input = request.body;
+            
+            return myReddit.checkUserLogin(input.username, input.password)
+            
+        .then(resp =>{
+          console.log(resp);
+            return myReddit.createUserSession(resp[0].id);
+            
         })
-        .then(
-            response.redirect('/')
-            );
+        .then(resp =>{
+            
+            console.log(resp, 'the response after calling createUserSession');
+            response.cookie('SESSION', resp.id).redirect('/');
+            
+        });
+        
+        
+        
     });
     
     authController.get('/signup', function(request, response) {
@@ -35,9 +44,17 @@ module.exports = function(myReddit) {
            username: input.username,
            password: input.password
            })
+        
         .then(
+            
             response.redirect('/auth/login')
-            );
+            )
+        .catch(error => {
+            console.log(error + " " + "here is the error");
+        });
+        
+        
+        
     });
     
     return authController;
