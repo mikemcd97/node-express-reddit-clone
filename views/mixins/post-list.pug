@@ -1,4 +1,7 @@
 mixin postList(posts)
+    if page => "/r"
+        h2= posts[0].subreddit.name
+        p= posts[0].subreddit.description
     ul.post-list
         each post in posts
             li.post

@@ -18,6 +18,7 @@ var authController = require('./controllers/auth.js');
 var RedditAPI = require('./lib/reddit.js');
 var connection = mysql.createPool({
     user: 'root',
+    password: 'root',
     database: 'reddit'
 });
 var myReddit = new RedditAPI(connection);
@@ -55,7 +56,7 @@ This custom middleware checks in the cookies if there is a SESSION token and val
 NOTE: This middleware is currently commented out! Uncomment it once you've implemented the RedditAPI
 method `getUserFromSession`
  */
-// app.use(checkLoginToken(myReddit));
+app.use(checkLoginToken(myReddit));
 
 
 
@@ -111,13 +112,29 @@ app.get('/subreddits', function(request, response) {
     1. Get all subreddits with RedditAPI
     2. Render some HTML that lists all the subreddits
      */
-    
+
     response.send("TO BE IMPLEMENTED");
 });
 
 // Subreddit homepage, similar to the regular home page but filtered by sub.
 app.get('/r/:subreddit', function(request, response) {
-    response.send("TO BE IMPLEMENTED");
+  myReddit.getSubredditsByName(request.params.subreddit)
+  .then(resp=>{
+  if(resp===null){
+    response.status(404);
+  }
+  else{
+    return resp;
+  }
+  })
+  .then(resp=>{
+    return myReddit.getAllPosts(resp[0].id);
+  })
+  .then(resp=>{
+    response.render('homepage.pug', {posts: resp});
+  });
+
+
 });
 
 // Sorted home page
