@@ -2,9 +2,19 @@ extends layout.pug
 include mixins/post-list
 
 block title
-    title Welcome to Reddit Clone!!!
+    title The Cool Spot
 
 block content
-    h1 Welcome to Reddit!!!
-
-    +postList(posts)
+  div.stack-high.titleBar.grape-pool-water
+      h1
+        a.oblique.palatino-text.pool-water-text.title(href="/") Cool Reddit
+      if loggedInUser
+        a.huge.palatino-text.perspective-right.createButton(href='/createpost') Create a Post!
+  ul.simple-nav.sorter.grape-pool-water
+      li
+        a.grape-pool-water(href="/sort/hot") Sort by Cool
+          span.pool-water-text see the latest and greatest
+      li
+        a.grape-pool-water(href="/sort/top") Sort by Top
+          span.pool-water-text see only the greatest
+  +postList(posts)

@@ -1,3 +1,48 @@
 body {
     font-family: Helvetica, arial, sans-serif;
+    color:green;
+}
+
+
+ul{
+  list-style: none;
+  -webkit-padding-start:0%;
+}
+
+
+
+.titleBar{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+
+  width:100%;
+}
+.post-list{
+/*padding-top: 10%;*/
+}
+.post{
+  width:100%;
+  -webkit-margin-start:1%;
+  -webkit-padding-start: 1%;
+  -webkit-margin-end:1%;
+  -webkit-padding-end: 1%;
+}
+.title{
+  padding:0;
+  margin:0;
+}
+
+.createButton{
+  padding-right:2%;
+}
+
+.createButton:hover{
+  -ms-transform: skew(15deg,10deg); /* IE 9 */
+  -webkit-transform: skew(15deg,10deg); /* Safari */
+  transform: skew(15deg,10deg); /* Standard syntax */
+}
+.sorter{
+padding-top:10%;
 }

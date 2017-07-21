@@ -2,13 +2,15 @@ doctype html
 html
     head
         meta(charset="utf-8")
+        link(rel="stylesheet", href="/static/Brutalist-Framework/css/core/core.css")
         link(rel="stylesheet", href="/static/app.css")
+        
         block title
-            title Reddit Clone
-    body
+            title Cool Reddit
+    body.water.grape-text
         header
             if loggedInUser
-                p Welcome #{loggedInUser.username}
+                p.pool-water.grape-text.bigger.palatino-text.sticky-top-right.stack-top Welcome #{loggedInUser.username}
             else
                 ul
                     li
@@ -18,3 +20,7 @@ html
         main
             block content
         footer &copy; 2017 blah
+        
+        script(src='/static/Brutalist-Framework/js/jquery.js' type='text/javascript')
+        script(src='/static/Brutalist-Framework/js/brutalist.js' type='text/javascript')
+        script(src='/static/Brutalist-Framework/js/start.brutalizing.js' type='text/javascript')

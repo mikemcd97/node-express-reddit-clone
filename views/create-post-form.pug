@@ -1,0 +1,12 @@
+h1 Share a new link!
+form(method="POST" action="/createPost")
+  p Subreddit:
+    select(name="subredditId")
+      each post in posts
+        option(value=post.id)= post.name
+  p URL:
+    input(type="text" name="url")
+  p Title: 
+    input(type="text" name="title")
+  p  
+    button(type="submit") Post!

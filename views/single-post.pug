@@ -1,0 +1,12 @@
+extends layout.pug
+
+block content
+  h2
+    a(href= post.url)= post.title
+  ul.comment-list
+    each comment in comments
+      li.comment
+        a(href="/u/" + comment.user.username)= comment.user.username
+        p= comment.text
+        
+    

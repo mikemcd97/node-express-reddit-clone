@@ -7,7 +7,7 @@ var cookieParser = require('cookie-parser'); // parses cookie from Cookie reques
 var morgan = require('morgan'); // logs every request on the console
 var checkLoginToken = require('./lib/check-login-token.js'); // checks if cookie has a SESSION token and sets request.user
 var onlyLoggedIn = require('./lib/only-logged-in.js'); // only allows requests from logged in users
-
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
 // Controllers
 var authController = require('./controllers/auth.js');
 
@@ -131,7 +131,7 @@ app.get('/r/:subreddit', function(request, response) {
     return myReddit.getAllPosts(resp[0].id);
   })
   .then(resp=>{
-    response.render('homepage.pug', {posts: resp});
+    response.render('homepage.pug', {posts: resp, url: "/r"});
   });
 
 
@@ -139,12 +139,34 @@ app.get('/r/:subreddit', function(request, response) {
 
 // Sorted home page
 app.get('/sort/:method', function(request, response) {
-    response.send("TO BE IMPLEMENTED");
+    if(request.params.method === 'hot'){
+      return myReddit.getAllPosts()
+      .then(resp=>{
+        response.render('homepage.pug', {posts: resp})
+      });
+    }
+    else if(request.params.method === 'top'){
+      return myReddit.getAllPosts(response.subredditId,'top')
+      .then(resp=>{
+        response.render('homepage', {posts: resp})
+      });
+    }
+    else{
+      response.status(404);
+    }
+
 });
 
 app.get('/post/:postId', function(request, response) {
-    response.send("TO BE IMPLEMENTED");
-});
+    Promise.all([myReddit.getSinglePost(request.params.postId), myReddit.getCommentsForPost(request.params.postId)])
+    .then(resp=>{
+      response.render('single-post', {post: resp[0], comments: resp[1]})
+    })
+
+
+
+    })
+
 
 /*
 This is a POST endpoint. It will be called when a form is submitted with method="POST" action="/vote"
@@ -155,18 +177,41 @@ The app.* methods of express can actually take multiple middleware, forming a ch
 This basically says: if there is a POST /vote request, first pass it thru the onlyLoggedIn middleware. If that
 middleware calls next(), then also pass it to the final request handler specified.
  */
-app.post('/vote', onlyLoggedIn, function(request, response) {
-    response.send("TO BE IMPLEMENTED");
+app.post('/vote', onlyLoggedIn, urlencodedParser, function(request, response) {
+    var input = request.body;
+    var user = request.loggedInUser;
+    console.log(input, 'here it is bb');
+    return myReddit.createVote({voteDirection: +input.vote,
+                                postId: input.postId,
+                                userId: user.userId
+                                })
+    .then(resp=>{
+      response.redirect('/');
+    });
 });
 
 // This handler will send out an HTML form for creating a new post
 app.get('/createPost', onlyLoggedIn, function(request, response) {
-    response.send("TO BE IMPLEMENTED");
+    return myReddit.getAllSubreddits()
+    .then(resp=>{
+      response.render('create-post-form.pug', {posts: resp})
+    });
 });
 
 // POST handler for form submissions creating a new post
-app.post('/createPost', onlyLoggedIn, function(request, response) {
-    response.send("TO BE IMPLEMENTED");
+app.post('/createPost', onlyLoggedIn, urlencodedParser, function(request, response) {
+    var input = request.body;
+    var user = request.loggedInUser;
+    console.log(user, "this is the user")
+    return myReddit.createPost({subredditId: input.subredditId,
+                                userId: user.userId,
+                                title: input.title,
+                                url: input.url
+    })
+    .then(resp=>{
+      console.log(resp, 'createpost response')
+      response.redirect(`/post/${resp}/`);
+    })
 });
 
 // Listen
